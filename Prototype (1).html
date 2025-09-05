@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siya Pa rin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+        }
+        .calculator-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        .input-field {
+            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .result-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen py-10">
+    <div class="max-w-4xl w-full px-6">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white drop-shadow-lg">Calculator ni Sean</h1>
+            <p class="text-white mt-2">Calculate your monthly carbon footprint
+        </div>
+
+        <div class="calculator-card rounded-2xl p-8 shadow-2xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <img src="HAHAHA.jdpg" alt="..." class="mr-3 rounded-full w-40 h-30">
+                        <h3 class="text-lg font-semibold text-white">Transportation</h3>
+                    </div>
+                    <label class="block text-white text-sm mb-2">Miles driven monthly</label>
+                    <input type="number" id="miles" class="input-field w-full p-3 rounded-lg text-white placeholder-white" placeholder="Enter miles">
+                    <label class="block text-white text-sm mb-2 mt-4">Fuel efficiency (MPG)</label>
+                    <input type="number" id="mpg" class="input-field w-full p-3 rounded-lg text-white placeholder-white" placeholder="Enter MPG" value="25">
+                </div>
+
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <img src="https://placehold.co/50x50" alt="Icon" class="mr-3 rounded-full">
+                        <h3 class="text-lg font-semibold text-white">Energy Use</h3>
+                    </div>
+                    <label class="block text-white text-sm mb-2">Electricity usage (kWh/month)</label>
+                    <input type="number" id="electricity" class="input-field w-full p-3 rounded-lg text-white placeholder-white" placeholder="Enter kWh">
+                    <label class="block text-white text-sm mb-2 mt-4">Gas usage (therm/month)</label>
+                    <input type="number" id="gas" class="input-field w-full p-3 rounded-lg text-white placeholder-white" placeholder="Enter therm">
+                </div>
+
+                <div class="glass-effect rounded-xl p-6 lg:col-start-2">
+                    <div class="flex items-center mb-4">
+                        <img src="https://placehold.co/50x50" alt="Icon" class="mr-3 rounded-full">
+                        <h3 class="text-lg font-semibold text-white">Diet</h3>
+                    </div>
+                    <label class="block text-white text-sm mb-2">Weekly meat consumption (lbs)</label>
+                    <input type="number" id="meat" class="input-field w-full p-3 rounded-lg text-white placeholder-white" placeholder="Enter lbs">
+                    <label class="block text-white text-sm mb-2 mt-4">Weekly dairy (lbs)</label>
+                    <input type="number" id="dairy" class="input-field w-full p-3 rounded-lg text-white placeholder-white" placeholder="Enter lbs">
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button id="calculateBtn" class="bg-white text-green-600 font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition duration-300">
+                    Calculate Footprint <i class="fas fa-leaf ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-card rounded-2xl p-8 mt-8 shadow-2xl hidden">
+            <h2 class="text-2xl font-bold text-white text-center mb-6">Your Carbon Footprint</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-effect rounded-xl p-6 text-center">
+                    <h4 class="text-white font-semibold">Total CO2</h4>
+                    <p id="totalCO2" class="text-3xl font-bold text-yellow-300">0</p>
+                    <p class="text-white text-sm">kg of CO2/month</p>
+                </div>
+                <div class="glass-effect rounded-xl p-6 text-center">
+                    <h4 class="text-white font-semibold">Tree Equivalent</h4>
+                    <p id="trees" class="text-3xl font-bold text-green-300">0</p>
+                    <p class="text-white text-sm">trees to offset</p>
+                </div>
+                <div class="glass-effect rounded-xl p-6 text-center">
+                    <h4 class="text-white font-semibold">Suggestions</h4>
+                    <button id="viewTips" class="bg-green-500 text-white py-2 px-4 rounded-lg mt-2">View Tips</button>
+                </div>
+            </div>
+            <div id="tips" class="mt-6 text-white hidden"></div>
+        </div>
+    </div>
+
+<script>
+    document.getElementById('calculateBtn').addEventListener('click', calculateFootprint);
+    document.getElementById('viewTips').addEventListener('click', () => {
+        document.getElementById('tips').classList.toggle('hidden');
+    });
+
+    function calculateFootprint() {
+        const miles = parseFloat(document.getElementById('miles').value) || 0;
+        const mpg = parseFloat(document.getElementById('mpg').value) || 25;
+        const electricity = parseFloat(document.getElementById('electricity').value) || 0;
+        const gas = parseFloat(document.getElementById('gas').value) || 0;
+        const meat = parseFloat(document.getElementById('meat').value) || 0;
+        const dairy = parseFloat(document.getElementById('dairy').value) || 0;
+
+        const transportCO2 = (miles / mpg) * 19.4 * 0.907;
+        const energyCO2 = ((electricity * 0.92) + (gas * 5.3)) * 0.907;
+        const dietCO2 = ((meat * 60) + (dairy * 15));
+
+        const totalCO2 = (transportCO2 + energyCO2 + dietCO2).toFixed(2);
+        const treesToOffset = Math.ceil(totalCO2 / 20);
+
+        document.getElementById('totalCO2').textContent = totalCO2;
+        document.getElementById('trees').textContent = treesToOffset;
+        document.getElementById('resultSection').classList.remove('hidden');
+
+        const lowTips = [
+            "Great job! Try reducing single-use plastics for extra impact.",
+            "Consider biking or walking short trips.",
+            "Share your eco-friendly habits with friends to inspire them."
+        ];
+        const mediumTips = [
+            "Switch to LED bulbs and unplug unused electronics.",
+            "Carpool or use public transportation when possible.",
+            "Incorporate more plant-based meals into your diet."
+        ];
+        const highTips = [
+            "Consider switching to renewable energy sources if possible.",
+            "Upgrade to energy-efficient appliances.",
+            "Cut down on frequent car use—explore hybrid/electric options."
+        ];
+
+        let tipsList = [];
+        if (totalCO2 < 500) {
+            tipsList = lowTips;
+        } else if (totalCO2 < 1500) {
+            tipsList = mediumTips;
+        } else {
+            tipsList = highTips;
+        }
+
+        const selectedTips = [];
+        while (selectedTips.length < 2) {
+            const randomTip = tipsList[Math.floor(Math.random() * tipsList.length)];
+            if (!selectedTips.includes(randomTip)) {
+                selectedTips.push(randomTip);
+            }
+        }
+
+        const tipsContainer = document.getElementById('tips');
+        tipsContainer.innerHTML = "<ul class='space-y-2'>" +
+            selectedTips.map(tip => `<li>• ${tip}</li>`).join("") +
+            "</ul>";
+    }
+</script>
+</body>
+</html>
